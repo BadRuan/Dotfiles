@@ -1,0 +1,7 @@
+Host air
+    HostName macbook-air
+    User ruanfumin
+    Port 22
+    IdentityFile C:\Users\RuanFumin\.ssh\id_ed25519
+
+# ssh设置参考示例
