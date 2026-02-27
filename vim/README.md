@@ -46,6 +46,12 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 ```
 
+常用命令：
+- `:PlugInstall` to install the plugins
+- `:PlugUpdate` to install or update the plugins
+- `:PlugDiff` to review the changes from the last update
+- `:PlugClean` to remove plugins no longer in the list
+
 ### vim-plug 国内源
 
 将`plug.vim`克隆下载后复制到`autoload`目录下:
