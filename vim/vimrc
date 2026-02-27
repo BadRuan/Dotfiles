@@ -1,0 +1,61 @@
+let g:polyglot_disabled = ['autoindent']
+let g:polyglot_is_disabled = 0
+
+" 启用文件类型检测
+filetype plugin indent on
+filetype on
+
+" 语法高亮基础设置
+syntax enable
+syntax on
+
+set background=dark      " 暗色主题
+set t_Co=256            " 256色支持
+set termguicolors       " 真彩色支持（Neovim）
+
+set nocompatible
+
+map Q :q<CR>
+map S :w<CR>
+map s <nop>
+
+set cursorline
+set hlsearch
+exec "nohlsearch"
+set incsearch
+set number
+set relativenumber
+set wrap
+set showcmd
+set wildmenu
+set ignorecase
+set smartcase
+set scrolloff=5
+set encoding=utf-8
+set ruler 
+set showmode
+set tabstop=4
+set softtabstop=4
+set autoindent
+set smarttab
+set shiftwidth=4
+set expandtab
+
+call plug#begin()
+    Plug 'https://gitcode.com/vim-airline/vim-airline'
+    Plug 'yianwillis/vimcdoc'
+    Plug 'scrooloose/syntastic'
+    Plug 'ycm-core/YouCompleteMe'
+    Plug 'tpope/vim-surround'
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
+    Plug 'sheerun/vim-polyglot'
+    Plug 'airblade/vim-gitgutter'
+    Plug 'preservim/nerdcommenter'
+    Plug 'whatyouhide/vim-gotham'
+    Plug 'fatih/vim-go'
+    Plug 'vim-python/python-syntax'
+    Plug 'yuezk/vim-js'
+call plug#end()
+
+colorscheme gotham256
