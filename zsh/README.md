@@ -101,7 +101,13 @@ plugins=(
 git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 ```
 
-#### 3. Z
+#### 3. zsh-autocomplete
+
+```zsh
+git clone https://github.com/marlonrichert/zsh-autocomplete.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete
+```
+
+#### 4. Z
 
 > z 是一个文件夹快捷跳转插件，对于曾经跳转过的目录，只需要输入最终目标文件夹名称，就可以快速跳转，避免再输入长串路径，提高切换文件夹的效率。
 
@@ -112,6 +118,7 @@ plugins=(
      # other plugins...
      zsh-autosuggestions
      zsh-syntax-highlighting
+     zsh-autocomplete
      z
 )
 ```
