@@ -35,3 +35,5 @@ fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 source <(fzf --zsh)
+
+[[ -f ~/.profile ]] && source ~/.profile
