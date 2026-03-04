@@ -12,11 +12,17 @@ linux（mac）下有各种app，每个人会根据自己的喜好和习惯来设
 
 ```zsh
 ln -s ~/Documents/dotfiles/vim/vimrc ~/.vim/vimrc
+
 ln -s ~/Documents/dotfiles/zsh/zshrc ~/.zshrc
 ```
 
 ## 目录
 
-- [zsh](/zsh)
-- [vim](/vim)
+- [zsh](/zsh/README.md)
+- [profile](/profile/README.md)
+- [vim](/vim/README.md)
+- [ssh](/ssh/README.md)
 
+## 计划
+
+写Shell脚本，可以在新环境一键运行部署好Dotfiles。
