@@ -23,6 +23,9 @@ ln -s ~/Documents/dotfiles/zsh/zshrc ~/.zshrc
 - [vim](/vim/README.md)
 - [ssh](/ssh/README.md)
 
-## 计划
+## 自动安装
 
-写Shell脚本，可以在新环境一键运行部署好Dotfiles。
+自动安装ZSH配置命令：
+```zsh
+sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_install_zsh.sh)"
+```
