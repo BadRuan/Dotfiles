@@ -29,3 +29,7 @@ ln -s ~/Documents/dotfiles/zsh/zshrc ~/.zshrc
 ```zsh
 sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_install_zsh.sh)"
 ```
+
+目标是自动使用Linux对应的包管理器，安装好vim、git，后面使用国内git源（gitee）下载安装zsh相关插件。
+
+备注：部分指令还需要完善，不能做到全程无人工确认。
