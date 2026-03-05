@@ -59,7 +59,8 @@ fi
 
 
 echo "下载个人Dotfile文件: "
-git clone https://gitee.com/ruanfumin/dotfiles.git ~
+cd ~
+git clone https://gitee.com/ruanfumin/dotfiles.git 
 
 
 echo "开始安装zsh SHELL: "
