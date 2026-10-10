@@ -1,4 +1,6 @@
 
+#!/bin/bash
+
 set -e
 
 # Make sure important variables exist if not already defined
