@@ -21,6 +21,7 @@ Linux / macOS 下的各种应用都支持通过配置文件自定义行为（快
 
 | 目录 | 说明 |
 |------|------|
+| [setup.sh](setup.sh) | 一键汇总安装脚本（换源 / 常见工具 / zsh / vim / tmux） |
 | [zsh/](zsh/) | zsh Shell 配置、Oh-My-Zsh、插件、主题 |
 | [vim/](vim/) | Vim 编辑器配置与插件 |
 | [tmux/](tmux/) | tmux 终端复用器配置（TPM 插件、Catppuccin 主题、分屏与会话管理） |
@@ -29,6 +30,36 @@ Linux / macOS 下的各种应用都支持通过配置文件自定义行为（快
 | [mirror/](mirror/) | 包管理器国内镜像源切换说明（chsrc / LinuxMirrors / Cmirror） |
 
 ## 快速开始
+
+### 一键全量安装（汇总脚本）
+
+根目录的 [setup.sh](setup.sh) 可一次完成 **换源 → 常见工具 → zsh → vim → tmux** 全流程，支持静默与交互两种模式：
+
+```bash
+# 交互模式：逐步确认
+bash setup.sh
+
+# 静默模式：全部默认执行
+bash setup.sh --unattended
+
+# 预演：仅打印将执行的动作，不实际执行
+bash setup.sh --dry-run
+
+# 云端直接运行（无需先克隆仓库）
+curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/setup.sh | bash
+curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/setup.sh | bash -s -- --unattended
+```
+
+脚本按顺序执行：
+1. **替换国内镜像源** — 默认 chsrc（Gitee 安装、自动测速），可选 LinuxMirrors（`--mirror-tool linuxmirrors`，静默模式需配合 `--mirror-src <镜像域名>`）
+2. **安装常见工具** — git、curl、wget、tmux、vim、zsh、lsd、btop（仓库中不存在的包自动逐个重试并告警，不中断流程）
+3. **配置 zsh** — 复用 [zsh/auto_install_zsh.sh](zsh/)（Oh-My-Zsh、powerlevel10k、插件、Zinit）
+4. **配置 vim** — 复用 [vim/auto_install_vim.sh](vim/)（vim-plug + 全部插件，`--with-ycm` 可选补全引擎）
+5. **配置 tmux** — 软链 `tmux.conf`、克隆 TPM（Gitee 镜像优先）、命令行自动安装插件
+
+常用选项：`--no-mirror`、`--no-tools`、`--no-zsh`、`--no-vim`、`--no-tmux` 跳过对应步骤，`-y/--unattended` 静默，`--dry-run` 预演，完整选项见 `bash setup.sh --help`。
+
+> **说明**：root 账户可直接运行（无需 sudo）；换源工具细节见 [mirror/README.md](mirror/)；tmux 插件仓库在 GitHub，网络不通时安装失败可参考 [tmux/README.md](tmux/) 使用加速代理或手动克隆。执行结果会在末尾以汇总表输出，失败步骤可修复后重新运行本脚本。
 
 ### 一键安装 ZSH 环境
 
