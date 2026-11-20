@@ -49,6 +49,24 @@ sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_ins
 
 所有组件优先使用 **Gitee 国内镜像**，国内源不可用时自动回退到 GitHub。
 
+### 一键安装 Vim 环境
+
+在新的 Linux / macOS 机器上，运行以下命令即可自动安装完整的 Vim 环境：
+
+```bash
+sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/vim/auto_install_vim.sh)"
+```
+
+安装脚本会自动完成：
+1. **检测包管理器** — 支持 pacman、apt-get、dnf、brew
+2. **安装依赖** — git、vim、fzf
+3. **克隆 dotfiles** — 拉取本仓库并创建 `.vimrc` 软链接
+4. **安装 vim-plug** — Vim 插件管理器
+5. **安装全部插件** — airline、syntastic、fzf、vim-surround、nerdcommenter 等 14 个插件
+6. **Vim 启动自检** — 确认配置无报错
+
+所有组件优先使用 **GitCode 国内镜像**，镜像未收录时自动回退 **GitHub 加速代理** 与 **GitHub 直连**。插件安装后 `:PlugUpdate` 也会自动走国内镜像。可选安装 YouCompleteMe 补全引擎（`--with-ycm`），详见 [vim/README.md](vim/README.md)。
+
 ### 手动配置软链接
 
 如果只想手动配置某个组件：

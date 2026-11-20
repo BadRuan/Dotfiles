@@ -1,3 +1,20 @@
+" ============================================================================
+" Vim 配置 - dotfiles/vim/vimrc
+"
+" 一键安装（含 vim-plug 与全部插件，国内镜像加速）：
+"   sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/vim/auto_install_vim.sh)"
+"
+" 插件由安装脚本从国内镜像克隆到 ~/.vim/plugged/，克隆后 origin 已改写为
+" GitHub 规范地址，因此本文件统一使用 Plug 短名；:PlugUpdate 时 git 会通过
+" 仓库内的 url.insteadOf 配置自动重定向回国内镜像，无需修改本文件。
+"
+" 可选组件通过目录是否存在启用（安装后重启 Vim 即生效）：
+"   YouCompleteMe 补全引擎：bash auto_install_vim.sh --with-ycm
+" ============================================================================
+
+set nocompatible          " 禁用 vi 兼容模式
+
+" vim-polyglot 相关设置（须在插件加载前定义）
 let g:polyglot_disabled = ['autoindent']
 let g:polyglot_is_disabled = 0
 
@@ -9,11 +26,9 @@ filetype on
 syntax enable
 syntax on
 
-set background=dark      " 暗色主题
-set t_Co=256            " 256色支持
-set termguicolors       " 真彩色支持（Neovim）
-
-set nocompatible
+set background=dark       " 暗色主题
+set t_Co=256              " 256色支持
+set termguicolors         " 真彩色支持
 
 map Q :q<CR>
 map S :w<CR>
@@ -32,7 +47,7 @@ set ignorecase
 set smartcase
 set scrolloff=5
 set encoding=utf-8
-set ruler 
+set ruler
 set showmode
 set tabstop=4
 set softtabstop=4
@@ -41,21 +56,47 @@ set smarttab
 set shiftwidth=4
 set expandtab
 
-call plug#begin()
-    Plug 'https://gitcode.com/vim-airline/vim-airline'
-    Plug 'yianwillis/vimcdoc'
-    Plug 'scrooloose/syntastic'
-    Plug 'ycm-core/YouCompleteMe'
-    Plug 'tpope/vim-surround'
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
-    Plug 'sheerun/vim-polyglot'
-    Plug 'airblade/vim-gitgutter'
-    Plug 'preservim/nerdcommenter'
-    Plug 'whatyouhide/vim-gotham'
-    Plug 'fatih/vim-go'
-    Plug 'vim-python/python-syntax'
-    Plug 'yuezk/vim-js'
-call plug#end()
+" ========== 插件（vim-plug）==========
+if filereadable(expand('~/.vim/autoload/plug.vim'))
+    call plug#begin('~/.vim/plugged')
+        " 状态栏增强
+        Plug 'vim-airline/vim-airline'
+        Plug 'vim-airline/vim-airline-themes'
+        " 中文帮助文档（:h 显示中文）
+        Plug 'yianwillis/vimcdoc'
+        " 语法检查
+        Plug 'vim-syntastic/syntastic'
+        " 代码补全（可选，运行 auto_install_vim.sh --with-ycm 安装，未安装时不注册插件）
+        if isdirectory(expand('~/.vim/plugged/YouCompleteMe'))
+            Plug 'ycm-core/YouCompleteMe'
+        endif
+        " 快速编辑包围符号（引号、括号等）
+        Plug 'tpope/vim-surround'
+        " 模糊查找（依赖系统 fzf 命令，安装脚本会自动安装）
+        Plug 'junegunn/fzf'
+        Plug 'junegunn/fzf.vim'
+        " 多语言语法高亮
+        Plug 'sheerun/vim-polyglot'
+        " Git 差异标记
+        Plug 'airblade/vim-gitgutter'
+        " 快速注释
+        Plug 'preservim/nerdcommenter'
+        " 主题
+        Plug 'whatyouhide/vim-gotham'
+        " 语言支持
+        Plug 'fatih/vim-go'
+        Plug 'vim-python/python-syntax'
+        Plug 'yuezk/vim-js'
+    call plug#end()
+else
+    echohl WarningMsg
+    echom 'vim-plug 未安装，插件不可用。请运行: bash ~/dotfiles/vim/auto_install_vim.sh'
+    echohl None
+endif
 
-colorscheme gotham256
+" ========== 配色 ==========
+" 主题插件未安装时静默回退到内置配色，避免启动报 E185 错误
+silent! colorscheme gotham256
+if !exists('g:colors_name')
+    colorscheme desert
+endif

@@ -36,7 +36,7 @@ FMT_RESET='\033[0m'
 # ========== 全局变量 ==========
 UNATTENDED=false
 DOTFILES_REPO_CN="https://gitee.com/ruanfumin/dotfiles.git"
-DOTFILES_REPO_INTL="https://github.com/ruanfumin/dotfiles.git"
+DOTFILES_REPO_INTL="https://github.com/BadRuan/Dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 
 # 国内镜像源（优先使用）
