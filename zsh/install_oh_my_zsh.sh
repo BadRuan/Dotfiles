@@ -1,5 +1,9 @@
-
 #!/bin/bash
+#
+# Oh-My-Zsh 安装脚本（定制版）
+# 基于 Oh-My-Zsh 官方安装脚本修改，默认使用国内 Gitee 镜像源
+# 此脚本由 auto_install_zsh.sh 调用，一般无需手动执行
+#
 
 set -e
 

@@ -1,4 +1,4 @@
-## zsh
+## ZSH 配置环境
 
 > zsh 是一个兼容 bash 的 shell，相较 bash 具有以下优点：
 - Tab 补全功能强大。命令、命令参数、文件路径均可以补全。
@@ -6,119 +6,198 @@
 - 主题丰富。
 - 可定制性高。
 
-### Install
+### 一键安装
 
-macOS：
+使用以下命令一键安装 zsh 及全部配置：
 
-```zsh
+```bash
+# 标准安装（有交互确认）
+sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_install_zsh.sh)"
+
+# 无人值守模式（跳过所有确认）
+curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_install_zsh.sh | bash -s -- --unattended
+```
+
+安装脚本会自动完成以下工作：
+1. 检测系统包管理器并安装 git、zsh
+2. 克隆 dotfiles 仓库并创建 `.zshrc` 软链接
+3. 安装 Oh-My-Zsh（国内 Gitee 镜像源优先）
+4. 安装 powerlevel10k 主题
+5. 安装 zsh 插件（autosuggestions、syntax-highlighting、autocomplete）
+6. 安装 Zinit 插件管理器
+7. 设置 zsh 为默认 Shell
+
+### 支持的系统
+
+| 系统 | 包管理器 | 安装命令 |
+|------|---------|---------|
+| Arch Linux / Manjaro | pacman | `sudo pacman -S zsh` |
+| Debian / Ubuntu | apt-get | `sudo apt-get install zsh` |
+| Fedora | dnf | `sudo dnf install zsh` |
+| macOS / Linux | Homebrew | `brew install zsh` |
+
+### 手动安装 zsh
+
+如果不使用一键安装脚本，可以手动安装 zsh：
+
+**macOS：**
+```bash
 brew install zsh
 ```
 
-ubuntu：
-```zsh
+**Ubuntu / Debian：**
+```bash
 sudo apt-get install zsh
 ```
 
-ArchLinux/Manjaro：
-
-```zsh
+**Arch Linux / Manjaro：**
+```bash
 sudo pacman -S zsh
 ```
 
-### Change Shell
+**Fedora：**
+```bash
+sudo dnf install zsh
+```
 
-安装好后查看`zsh`路径: `which zsh`
+### 切换默认 Shell
 
-使用 ``cat /etc/shells`` 查看系统可以用的 shell。
+安装好 zsh 后查看路径：`which zsh`
 
-使用 chsh -s /bin/zsh 命令将 zsh 设置为系统默认 shell。新开一个 Shell Session，就可以开始使用 zsh 了。
+使用 `cat /etc/shells` 查看系统可用的 shell。
+
+使用 `chsh -s /bin/zsh` 命令将 zsh 设置为系统默认 shell。新开一个 Shell Session 即可生效。
 
 ### zsh 配置文件
 
 zsh 的配置文件用于定制和配置 shell 的行为，默认路径为 `~/.zshrc`。
 
+本项目通过软链接管理配置文件：
+```bash
+ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
+```
 
-## oh-my-zsh
 
-> oh-my-zsh 是一个开源、成熟且使用众多的zsh框架。Oh My Zsh 是基于 zsh 命令行的一个扩展工具集，提供了丰富的扩展功能。
+## Oh-My-Zsh
+
+> oh-my-zsh 是一个开源、成熟且使用众多的 zsh 框架。Oh My Zsh 是基于 zsh 命令行的一个扩展工具集，提供了丰富的扩展功能。
 
 - 官网: [ohmyz.sh](https://ohmyz.sh/)
 - 仓库地址: [github.com](https://github.com/ohmyzsh/ohmyzsh)
 - 使用介绍: [zsh 安装与配置：9步打造高效命令行](https://zhuanlan.zhihu.com/p/441676276)
 
-### Install
+### 安装 Oh-My-Zsh
 
-```zsh
-# curl
+```bash
+# 使用国内镜像安装（推荐）
+REMOTE=https://gitee.com/ruanfumin/ohmyzsh.git sh -c "$(curl -fsSL https://gitee.com/ruanfumin/ohmyzsh/raw/master/tools/install.sh)"
+
+# 使用官方源安装
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# wget
-sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
 ```
 
-### 安装 oh-my-zsh 主题
+### 安装 powerlevel10k 主题
 
-推荐安装`powerlevel10k`主题：
-```zsh
+```bash
+# 国内镜像（推荐）
 git clone --depth=1 https://gitee.com/ruanfumin/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+# 国际源（回退）
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 ```
 
-修改`.zshrc`文件：
-```zshrc
+修改 `.zshrc` 文件：
+```bash
 ZSH_THEME="powerlevel10k/powerlevel10k"
 ```
 
-执行 `source ~/.zshrc` 配置生效。
+执行 `source ~/.zshrc` 使配置生效。首次启动会引导配置主题外观，后续可运行 `p10k configure` 重新配置。
 
-### 安装 oh-my-zsh 插件
+### 安装 Oh-My-Zsh 插件
 
-oh-my-zsh 已经内置了 git 插件，内置插件可以在 `～/.oh-my-zsh/plugins` 中查看 [awesome-zsh-plugins](https://github.com/unixorn/awesome-zsh-plugins) 里查看。
+oh-my-zsh 已经内置了 git 插件，更多插件可在 [awesome-zsh-plugins](https://github.com/unixorn/awesome-zsh-plugins) 中查看。
 
 #### 1. zsh-autosuggestions
 
-> [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) 是一个命令提示插件，当你输入命令时，会自动推测你可能需要输入的命令，按下右键可以快速采用建议。
+> [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) 是一个命令提示插件，当你输入命令时，会自动推测你可能需要输入的命令，按下 `→` 右键可以快速采用建议。
 
-安装步骤：
-
-1. 把插件下载到本地的 `~/.oh-my-zsh/custom/plugins` 目录：
-```zsh
+```bash
+# 国内镜像（推荐）
 git clone https://gitee.com/ruanfumin/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# 国际源
+git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 ```
-2. 在 `.zshrc` 中，把 `zsh-autosuggestions` 加入插件列表：
-```zshrc
-plugins=(
-    # other plugins...
-    zsh-autosuggestions  # 插件之间使用空格隔开
-)
-```
-3. 开启新的 Shell 或执行 `source ~/.zshrc` 就可以开始体验插件。
 
 #### 2. zsh-syntax-highlighting
 
-> [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) 是一个命令语法校验插件，在输入命令的过程中，若指令不合法，则指令显示为红色，若指令合法就会显示为绿色。
+> [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) 是一个命令语法校验插件，输入命令时，若指令不合法则显示为红色，合法则显示为绿色。
 
-```zsh
+```bash
+# 国内镜像（推荐）
 git clone https://gitee.com/ruanfumin/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# 国际源
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 ```
 
 #### 3. zsh-autocomplete
 
-```zsh
+> [zsh-autocomplete](https://github.com/marlonrichert/zsh-autocomplete) 提供实时自动补全功能，输入时自动显示可能的补全项。
+
+```bash
+# 国内镜像（推荐）
 git clone https://gitee.com/ruanfumin/zsh-autocomplete.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete
+
+# 国际源
+git clone https://github.com/marlonrichert/zsh-autocomplete.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete
 ```
 
-#### 4. Z
+#### 4. z（目录快捷跳转）
 
-> z 是一个文件夹快捷跳转插件，对于曾经跳转过的目录，只需要输入最终目标文件夹名称，就可以快速跳转，避免再输入长串路径，提高切换文件夹的效率。
+> z 是一个文件夹快捷跳转插件，对于曾经跳转过的目录，只需要输入最终目标文件夹名称即可快速跳转，避免输入长串路径。
 
-oh-my-zsh 内置了 z 插件，所以只需要在 `.zshrc` 中，把 z 加入插件列表：
+oh-my-zsh 内置了 z 插件，只需在 `.zshrc` 的 plugins 列表中加入 `z` 即可。
 
-```zshrc
+### 启用插件
+
+在 `.zshrc` 中配置插件列表：
+
+```bash
 plugins=(
-     # other plugins...
-     zsh-autosuggestions
-     zsh-syntax-highlighting
-     zsh-autocomplete
-     z
+    git
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    zsh-autocomplete
+    z
 )
 ```
+
+执行 `source ~/.zshrc` 或开启新的 Shell 使配置生效。
+
+
+## Zinit 插件管理器
+
+> [Zinit](https://github.com/zdharma-continuum/zinit) 是一个灵活的 zsh 插件管理器，支持懒加载等高级功能。
+
+```bash
+# 国内镜像（推荐）
+git clone --depth=1 https://gitee.com/ruanfumin/zinit.git ~/.local/share/zinit/zinit.git
+
+# 国际源
+git clone --depth=1 https://github.com/zdharma-continuum/zinit.git ~/.local/share/zinit/zinit.git
+```
+
+
+## 镜像源说明
+
+所有组件均优先使用 **Gitee 国内镜像源**，确保在国内网络环境下也能快速安装。当国内源不可用时，安装脚本会自动回退到 GitHub 国际源。
+
+| 组件 | Gitee 国内源 | GitHub 国际源 |
+|------|-------------|--------------|
+| Oh-My-Zsh | `gitee.com/ruanfumin/ohmyzsh` | `github.com/ohmyzsh/ohmyzsh` |
+| powerlevel10k | `gitee.com/ruanfumin/powerlevel10k` | `github.com/romkatv/powerlevel10k` |
+| zsh-autosuggestions | `gitee.com/ruanfumin/zsh-autosuggestions` | `github.com/zsh-users/zsh-autosuggestions` |
+| zsh-syntax-highlighting | `gitee.com/ruanfumin/zsh-syntax-highlighting` | `github.com/zsh-users/zsh-syntax-highlighting` |
+| zsh-autocomplete | `gitee.com/ruanfumin/zsh-autocomplete` | `github.com/marlonrichert/zsh-autocomplete` |
+| Zinit | `gitee.com/ruanfumin/zinit` | `github.com/zdharma-continuum/zinit` |
