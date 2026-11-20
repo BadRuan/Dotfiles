@@ -26,6 +26,7 @@ Linux / macOS 下的各种应用都支持通过配置文件自定义行为（快
 | [tmux/](tmux/) | tmux 终端复用器配置（TPM 插件、Catppuccin 主题、分屏与会话管理） |
 | [ssh/](ssh/) | SSH 连接配置 |
 | [profile/](profile/) | `.profile` 登录 Shell 配置说明 |
+| [mirror/](mirror/) | 包管理器国内镜像源切换说明（chsrc / LinuxMirrors / Cmirror） |
 
 ## 快速开始
 
@@ -88,3 +89,7 @@ ln -s ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
 ## 镜像源
 
 本项目所有 Git 仓库地址均提供 Gitee 国内镜像，确保国内网络环境下的安装速度。详细的镜像源对照表请参阅 [zsh/README.md](zsh/)。
+
+### 包管理器国内镜像源切换
+
+若 GitHub 等外网不通畅，需将 macOS 与主流 Linux 发行版的包管理器默认源替换为国内镜像（apt、dnf、pacman、brew 等），请参阅 [mirror/README.md](mirror/README.md) 中的工具说明与直接使用命令，包含 **chsrc**、**LinuxMirrors**、**Cmirror** 三款工具的安装与使用，以及外网完全不通时的手动兜底配置。
