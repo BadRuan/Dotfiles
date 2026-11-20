@@ -72,10 +72,12 @@ sudo dnf install zsh
 
 zsh 的配置文件用于定制和配置 shell 的行为，默认路径为 `~/.zshrc`。
 
-本项目通过软链接管理配置文件：
+本项目通过软链接管理配置文件（若 `~/.zshrc` 已存在，请先备份：`mv ~/.zshrc ~/.zshrc.bak`）：
 ```bash
 ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
 ```
+
+> 手动软链接前请先安装 Oh-My-Zsh 及插件（见下文各节），或直接使用一键安装脚本。未安装 Oh-My-Zsh 时 `zshrc` 会给出提示而不会报错中断。
 
 
 ## Oh-My-Zsh

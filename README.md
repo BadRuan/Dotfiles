@@ -53,13 +53,15 @@ sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_ins
 如果只想手动配置某个组件：
 
 ```bash
-# zsh 配置
+# zsh 配置（若 ~/.zshrc 已存在，请先备份：mv ~/.zshrc ~/.zshrc.bak）
 ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
 
 # vim 配置
 mkdir -p ~/.vim
 ln -s ~/dotfiles/vim/vimrc ~/.vim/vimrc
 ```
+
+> **注意**：手动软链接 `zshrc` 前，需先安装 Oh-My-Zsh 及相关插件（命令见 [zsh/README.md](zsh/)），否则主题和插件无法生效。全新机器建议直接使用上方的一键安装脚本，它会自动完成全部安装与软链接。
 
 ## 镜像源
 
