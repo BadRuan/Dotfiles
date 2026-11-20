@@ -23,6 +23,7 @@ Linux / macOS 下的各种应用都支持通过配置文件自定义行为（快
 |------|------|
 | [zsh/](zsh/) | zsh Shell 配置、Oh-My-Zsh、插件、主题 |
 | [vim/](vim/) | Vim 编辑器配置与插件 |
+| [tmux/](tmux/) | tmux 终端复用器配置（分屏、会话管理） |
 | [ssh/](ssh/) | SSH 连接配置 |
 | [profile/](profile/) | `.profile` 登录 Shell 配置说明 |
 
@@ -59,9 +60,12 @@ ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
 # vim 配置
 mkdir -p ~/.vim
 ln -s ~/dotfiles/vim/vimrc ~/.vim/vimrc
+
+# tmux 配置（若 ~/.tmux.conf 已存在，请先备份：mv ~/.tmux.conf ~/.tmux.conf.bak）
+ln -s ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
 ```
 
-> **注意**：手动软链接 `zshrc` 前，需先安装 Oh-My-Zsh 及相关插件（命令见 [zsh/README.md](zsh/)），否则主题和插件无法生效。全新机器建议直接使用上方的一键安装脚本，它会自动完成全部安装与软链接。
+> **注意**：手动软链接 `zshrc` 前，需先安装 Oh-My-Zsh 及相关插件（命令见 [zsh/README.md](zsh/)），否则主题和插件无法生效；软链接 `tmux.conf` 前需先安装 tmux（各发行版安装命令见 [tmux/README.md](tmux/)）。全新机器建议直接使用上方的一键安装脚本完成 zsh 环境的全部安装与软链接。
 
 ## 镜像源
 
