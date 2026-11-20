@@ -22,6 +22,10 @@
 # 无人值守模式（跳过所有交互确认）：
 #   curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_install_zsh.sh | bash -s -- --unattended
 #
+# 提权说明：
+#   - root 账户直接运行：特权命令直接执行，无需 sudo（精简容器/最小化安装通常没有 sudo）
+#   - 普通用户运行：自动经 sudo 提权；系统未安装 sudo 时会在需要提权处给出明确报错
+#
 
 set -e
 
@@ -65,6 +69,27 @@ command_exists() {
     command -v "$1" > /dev/null 2>&1
 }
 
+# ========== 提权方式 ==========
+# root 直接执行特权命令（无需 sudo）；普通用户经 sudo 提权
+if [ "$(id -u)" -eq 0 ]; then
+    SUDO=""
+else
+    SUDO="sudo"
+fi
+
+# 以特权执行命令：root 直接执行；普通用户经 sudo；两者皆不可用时给出明确报错
+run_priv() {
+    if [ -z "$SUDO" ]; then
+        "$@"
+    elif command_exists sudo; then
+        sudo "$@"
+    else
+        error "需要特权执行: $*"
+        error "当前为普通用户且系统未安装 sudo，请改用 root 运行本脚本"
+        return 1
+    fi
+}
+
 # 使用包管理器安装软件包
 package_install() {
     local pkg_mgr="$1"
@@ -73,14 +98,14 @@ package_install() {
 
     case "$pkg_mgr" in
         pacman)
-            sudo "$pkg_mgr" -S --noconfirm "$package_name"
+            run_priv "$pkg_mgr" -S --noconfirm "$package_name"
             ;;
         apt-get)
-            sudo "$pkg_mgr" update -y
-            sudo "$pkg_mgr" install -y "$package_name"
+            run_priv "$pkg_mgr" update -y
+            run_priv "$pkg_mgr" install -y "$package_name"
             ;;
         dnf)
-            sudo "$pkg_mgr" install -y "$package_name"
+            run_priv "$pkg_mgr" install -y "$package_name"
             ;;
         brew)
             brew update
@@ -138,6 +163,10 @@ echo -e "${FMT_BOLD}========================================${FMT_RESET}"
 echo -e "${FMT_BOLD}   Dotfiles ZSH 环境自动安装脚本${FMT_RESET}"
 echo -e "${FMT_BOLD}========================================${FMT_RESET}"
 echo ""
+
+if [ -z "$SUDO" ]; then
+    info "当前为 root 用户，特权命令直接执行（无需 sudo）"
+fi
 
 # --- 1. 检测包管理器 ---
 info "检测系统包管理器..."
@@ -280,10 +309,12 @@ else
     if [ -z "$zsh_path" ]; then
         warn "找不到 zsh 可执行文件，请手动设置默认 Shell"
     elif command_exists chsh; then
+        target_user="${USER:-$(id -un)}"
         if [ "$UNATTENDED" = true ]; then
             info "无人值守模式：自动切换默认 Shell 为 zsh..."
             if grep -q "^$zsh_path$" /etc/shells 2>/dev/null; then
-                sudo chsh -s "$zsh_path" "$USER" 2>/dev/null || warn "chsh 需要密码，请手动执行: chsh -s $zsh_path"
+                run_priv chsh -s "$zsh_path" "$target_user" 2>/dev/null \
+                    || warn "chsh 执行失败，请手动执行: ${SUDO:+$SUDO }chsh -s $zsh_path $target_user"
             else
                 warn "zsh 未在 /etc/shells 中注册，请手动添加并执行: chsh -s $zsh_path"
             fi
@@ -294,15 +325,16 @@ else
             case "$opt" in
                 [Yy]*|"")
                     if grep -q "^$zsh_path$" /etc/shells 2>/dev/null; then
-                        sudo chsh -s "$zsh_path" "$USER" 2>/dev/null \
+                        run_priv chsh -s "$zsh_path" "$target_user" 2>/dev/null \
                             && success "默认 Shell 已设置为 zsh" \
-                            || warn "chsh 失败，请手动执行: sudo chsh -s $zsh_path $USER"
+                            || warn "chsh 失败，请手动执行: ${SUDO:+$SUDO }chsh -s $zsh_path $target_user"
                     else
                         # 将 zsh 添加到 /etc/shells
-                        echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null
-                        sudo chsh -s "$zsh_path" "$USER" 2>/dev/null \
+                        echo "$zsh_path" | run_priv tee -a /etc/shells > /dev/null \
+                            || warn "写入 /etc/shells 失败，请手动执行: echo $zsh_path | ${SUDO:+$SUDO }tee -a /etc/shells"
+                        run_priv chsh -s "$zsh_path" "$target_user" 2>/dev/null \
                             && success "默认 Shell 已设置为 zsh" \
-                            || warn "chsh 失败，请手动执行: sudo chsh -s $zsh_path $USER"
+                            || warn "chsh 失败，请手动执行: ${SUDO:+$SUDO }chsh -s $zsh_path $target_user"
                     fi
                     ;;
                 *)

@@ -18,6 +18,8 @@ sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_ins
 curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_install_zsh.sh | bash -s -- --unattended
 ```
 
+> **提权说明**：脚本支持以 **root 账户直接运行**（无需 sudo，适合容器 / 最小化安装环境）；普通用户运行时自动经 sudo 提权，系统未安装 sudo 时会在需要提权处给出明确报错。
+
 安装脚本会自动完成以下工作：
 1. 检测系统包管理器并安装 git、zsh
 2. 克隆 dotfiles 仓库并创建 `.zshrc` 软链接

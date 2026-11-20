@@ -50,6 +50,8 @@ sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_ins
 
 所有组件优先使用 **Gitee 国内镜像**，国内源不可用时自动回退到 GitHub。
 
+> **提权说明**：支持以 **root 账户直接运行**（无需 sudo，适合容器 / 最小化安装环境）；普通用户运行时自动经 sudo 提权。
+
 ### 一键安装 Vim 环境
 
 在新的 Linux / macOS 机器上，运行以下命令即可自动安装完整的 Vim 环境：
