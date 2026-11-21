@@ -36,7 +36,6 @@ map s <nop>
 
 set cursorline
 set hlsearch
-exec "nohlsearch"
 set incsearch
 set number
 set relativenumber

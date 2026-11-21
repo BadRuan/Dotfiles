@@ -9,12 +9,17 @@ fi
 
 # ---------- Oh-My-Zsh 基础配置 ----------
 export ZSH="$HOME/.oh-my-zsh"
-export HISTSIZE=1000000000
+# 历史记录：10 万条足够日常使用；设置过大只会拖慢 shell 启动、浪费内存与磁盘
+export HISTSIZE=100000
 export SAVEHIST=$HISTSIZE
 
 setopt EXTENDED_HISTORY
 setopt autocd
-autoload -U compinit; compinit
+# 补全初始化：正常由 Oh-My-Zsh 内部统一调用 compinit，
+# 这里仅在缺失 Oh-My-Zsh 时兜底，避免重复执行 compinit 拖慢启动。
+if [[ ! -f "$ZSH/oh-my-zsh.sh" ]]; then
+  autoload -U compinit; compinit
+fi
 
 # ---------- 主题 ----------
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -24,8 +29,8 @@ plugins=(
     git
     zsh-autosuggestions
     zsh-syntax-highlighting
-    zsh-autocomplete
     z
+    zsh-autocomplete
 )
 
 # 加载 Oh-My-Zsh（未安装时给出提示，不报错中断）
