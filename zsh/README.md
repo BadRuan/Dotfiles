@@ -19,6 +19,8 @@ curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_install_zsh.
 ```
 
 > **提权说明**：脚本支持以 **root 账户直接运行**（无需 sudo，适合容器 / 最小化安装环境）；普通用户运行时自动经 sudo 提权，系统未安装 sudo 时会在需要提权处给出明确报错。
+>
+> **容器 / 旧系统说明**：pacman 下载失败（SSL 证书过旧或缺失、镜像不可达、过期数据库 404，或容器镜像缺少同步数据库导致 `target not found`）时，脚本会自动把 `/etc/pacman.d/mirrorlist` 切换为国内源（清华 / 中科大 / 阿里云，原配置备份为 `mirrorlist.dotfiles-backup`），执行 `pacman -Sy` 同步数据库并重试；HTTPS 仍不通时会临时改用 HTTP 完成 `ca-certificates` / `archlinux-keyring` 更新，成功后再切回 HTTPS。签名 / 密钥环仍失败时会打印手动修复指引。
 
 安装脚本会自动完成以下工作：
 1. 检测系统包管理器并安装 git、zsh

@@ -82,6 +82,8 @@ sh -c "$(curl -fsSL https://gitee.com/ruanfumin/dotfiles/raw/master/zsh/auto_ins
 所有组件优先使用 **Gitee 国内镜像**，国内源不可用时自动回退到 GitHub。
 
 > **提权说明**：支持以 **root 账户直接运行**（无需 sudo，适合容器 / 最小化安装环境）；普通用户运行时自动经 sudo 提权。
+>
+> **容器 / 旧系统说明**：Arch 容器或旧系统中 pacman 下载失败（SSL 证书过旧或缺失、镜像不可达、数据库过期，或容器镜像缺少同步数据库导致 `target not found`）时，脚本会自动切换国内镜像源（原配置备份为 `mirrorlist.dotfiles-backup`）、同步数据库并重试，HTTPS 不通时临时用 HTTP 更新证书后再切回。
 
 ### 一键安装 Vim 环境
 

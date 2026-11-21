@@ -90,6 +90,99 @@ run_priv() {
     fi
 }
 
+# 切换 pacman 镜像源为国内源（https 或 http 两版）
+# 常见于容器镜像：源过期 / 证书链不受信任导致下载失败时自动调用
+fix_pacman_mirrors() {
+    local scheme="$1" # https | http
+    local mirrorlist="/etc/pacman.d/mirrorlist"
+    local backup="/etc/pacman.d/mirrorlist.dotfiles-backup"
+
+    # 仅首次备份，保留最原始的配置
+    if [ -f "$mirrorlist" ] && [ ! -f "$backup" ]; then
+        run_priv cp "$mirrorlist" "$backup" 2>/dev/null || true
+        info "已备份原 mirrorlist → $backup"
+    fi
+
+    if [ "$scheme" = "http" ]; then
+        run_priv tee "$mirrorlist" > /dev/null <<'MIRROR_EOF'
+Server = http://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
+Server = http://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
+Server = http://mirrors.aliyun.com/archlinux/$repo/os/$arch
+MIRROR_EOF
+    else
+        run_priv tee "$mirrorlist" > /dev/null <<'MIRROR_EOF'
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
+Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
+Server = https://mirrors.aliyun.com/archlinux/$repo/os/$arch
+MIRROR_EOF
+    fi
+    info "mirrorlist 已切换为国内源（$scheme）"
+}
+
+# pacman 安装（带国内源自动修复）：
+# 下载失败（SSL 证书过旧/缺失、过期数据库 404、镜像不可达、容器镜像缺同步数据库
+# 导致 target not found）时自动切换国内镜像源、同步数据库并重试；HTTPS 仍不通
+# 则临时用 HTTP 完成 ca-certificates / archlinux-keyring 更新后再切回 HTTPS。
+pacman_install() {
+    local package_name="$1"
+    local logf
+    logf=$(mktemp)
+
+    run_priv pacman -S --noconfirm "$package_name" 2>&1 | tee "$logf"
+    # 调用方已确认该包此前未安装，用查询结果判断成败（管道状态是 tee 的，不可靠）
+    if pacman -Q "$package_name" > /dev/null 2>&1; then
+        rm -f "$logf"
+        return 0
+    fi
+
+    # 证书/镜像/数据库类错误才进入自动补救；包名写错等其它错误直接失败
+    if ! grep -qiE "SSL certificate|local issuer|failed retrieving file|database file for .* does not exist" "$logf"; then
+        rm -f "$logf"
+        error "安装 $package_name 失败（见上方 pacman 输出）"
+        return 1
+    fi
+
+    warn "pacman 下载失败（证书 / 镜像 / 数据库问题），自动切换国内镜像源并同步数据库后重试..."
+    fix_pacman_mirrors https
+    run_priv pacman -Sy --noconfirm ca-certificates 2>&1 | tee -a "$logf"
+    # 密钥环单独事务更新，失败不拖垮 ca-certificates
+    run_priv pacman -Sy --noconfirm archlinux-keyring 2>&1 | tee -a "$logf"
+    run_priv pacman -S --noconfirm "$package_name" 2>&1 | tee -a "$logf"
+    if pacman -Q "$package_name" > /dev/null 2>&1; then
+        success "已通过国内 HTTPS 源完成安装"
+        rm -f "$logf"
+        return 0
+    fi
+
+    warn "HTTPS 源仍不可用，改用 HTTP 源重试（临时绕过证书校验）..."
+    fix_pacman_mirrors http
+    run_priv pacman -Sy --noconfirm ca-certificates 2>&1 | tee -a "$logf"
+    run_priv pacman -Sy --noconfirm archlinux-keyring 2>&1 | tee -a "$logf"
+    run_priv pacman -S --noconfirm "$package_name" 2>&1 | tee -a "$logf"
+    if pacman -Q "$package_name" > /dev/null 2>&1; then
+        # 证书已更新，尝试切回 HTTPS 源
+        fix_pacman_mirrors https
+        if run_priv pacman -Sy --noconfirm ca-certificates > /dev/null 2>&1; then
+            success "证书已更新，镜像源保持国内 HTTPS"
+        else
+            fix_pacman_mirrors http
+            warn "HTTPS 仍不可用，暂用 HTTP 国内源（原配置备份: /etc/pacman.d/mirrorlist.dotfiles-backup）"
+        fi
+        rm -f "$logf"
+        return 0
+    fi
+
+    # 仍失败：给出针对性指引
+    if grep -qiE "signature|keyring|unknown trust|expired" "$logf"; then
+        error "疑似软件包签名 / 密钥环问题（旧容器镜像常见），可尝试："
+        error "  pacman -Sy --noconfirm archlinux-keyring && pacman-key --populate archlinux"
+    fi
+    rm -f "$logf"
+    error "安装 $package_name 失败，自动修复未生效（见上方输出）"
+    error "可参考 mirror/README.md 手动配置镜像源后重试"
+    return 1
+}
+
 # 使用包管理器安装软件包
 package_install() {
     local pkg_mgr="$1"
@@ -98,7 +191,7 @@ package_install() {
 
     case "$pkg_mgr" in
         pacman)
-            run_priv "$pkg_mgr" -S --noconfirm "$package_name"
+            pacman_install "$package_name"
             ;;
         apt-get)
             run_priv "$pkg_mgr" update -y
