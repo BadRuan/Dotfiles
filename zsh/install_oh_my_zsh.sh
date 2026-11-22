@@ -76,7 +76,7 @@ user_can_sudo() {
   #    to run `sudo` in the default locale (with `LANG=`) so that the message
   #    stays consistent regardless of the user's locale.
   #
-  ! LANG= sudo -n -v 2>&1 | grep -q "may not run sudo"
+  ! LANG='' sudo -n -v 2>&1 | grep -q "may not run sudo"
 }
 
 # The [ -t 1 ] check only works when the function is not called from
@@ -292,7 +292,7 @@ setup_zshrc() {
       return
     fi
     
-    if [ $OVERWRITE_CONFIRMATION != "no" ]; then
+    if [ "$OVERWRITE_CONFIRMATION" != "no" ]; then
       # Ask user for confirmation before backing up and overwriting
       echo "${FMT_YELLOW}Found ${zdot}/.zshrc."
       echo "The existing .zshrc will be backed up to .zshrc.pre-oh-my-zsh if overwritten."

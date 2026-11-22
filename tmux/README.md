@@ -209,3 +209,15 @@ A：GitHub 不可达，参照「插件下载源说明」手动从镜像克隆或
 
 **Q：电池模块不显示？**
 A：台式机等无电池设备上 `tmux-battery` 会显示为空，属正常现象。
+
+**Q：tmux 里跑 btop 图标/界面显示空白，直接在终端跑正常？**
+A：tmux server 启动时的 locale 不是 UTF-8（`LANG=C`/`POSIX`/未设置）。tmux 默认的 `update-environment` 不包含 `LANG/LC_*`，pane 会继承非 UTF-8 环境，btop 等 TUI 会整体渲染成空白。本配置已加入 `set -g update-environment "... LANG LC_ALL LC_CTYPE"`：attach 后**新开的 window** 会拿到客户端的 UTF-8 locale；已存在的 pane 不受影响，需重开 window，或彻底重启 tmux server（`tmux kill-server` 后重建）。
+
+**Q：进入 tmux 后提示行出现 `11;rgb:0c0c/0c0c/0c0c` 之类的残留文本？**
+A：这是 tmux attach 时发出的终端背景色查询（OSC 11）的回复被当成了普通输入。tmux 3.8 本应在约 0.55 秒（或 `escape-time`，取较大者）内消费该回复；回复**缺少 ST/BEL 终止符、使用 8-bit ST（`\x9c`）、或终止符迟到超过该窗口**时会透传进 pane。先确认所用终端为 iTerm2 / Terminal.app 等主流终端；若怀疑是终端回复格式问题，在 Mac 上执行以下命令取证并把输出发回来：
+
+```bash
+script -q /tmp/tmux-osc.log tmux   # 录制终端原始字节
+# 进入 tmux 后退出，然后：
+hexdump -C /tmp/tmux-osc.log | grep -A1 -B1 '1b 5d 31 31'   # 查看 OSC 11 回复的原始字节
+```

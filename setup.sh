@@ -255,7 +255,7 @@ install_pkgs() {
         done
         if [ -n "$failed" ]; then
             warn "以下软件包安装失败：$failed"
-            [ "$PKG_MGR" = "pacman" ] && warn "pacman 若提示“目标未找到”，请先执行 sudo pacman -Syu 更新本地数据库"
+            [ "$PKG_MGR" = "pacman" ] && warn "pacman 若提示「目标未找到」，请先执行 sudo pacman -Syu 更新本地数据库"
         fi
     fi
     return 0
@@ -610,13 +610,15 @@ do_tmux() {
     # 备份并软链 ~/.tmux.conf
     if [ -L "$HOME/.tmux.conf" ]; then
         if [ "$(readlink "$HOME/.tmux.conf")" = "$src" ]; then
+            # shellcheck disable=SC2088  # 展示用字面 ~，不需要展开
             info "~/.tmux.conf 软链已指向 $src，跳过"
         else
             info "更新 ~/.tmux.conf 软链 → $src"
             run ln -sfn "$src" "$HOME/.tmux.conf"
         fi
     elif [ -e "$HOME/.tmux.conf" ]; then
-        local bk="$HOME/.tmux.conf.backup.$(date +%Y%m%d%H%M%S)"
+        local bk
+        bk="$HOME/.tmux.conf.backup.$(date +%Y%m%d%H%M%S)"
         info "备份现有 ~/.tmux.conf → $bk"
         run cp -a "$HOME/.tmux.conf" "$bk"
         run ln -sfn "$src" "$HOME/.tmux.conf"

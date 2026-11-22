@@ -1,0 +1,23 @@
+name: shellcheck
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # -S warning：只拦 warning 及以上（style/info 级别的建议不阻断合并）
+      - name: Lint shell scripts
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y shellcheck
+          shellcheck -S warning \
+            setup.sh \
+            zsh/auto_install_zsh.sh \
+            zsh/install_oh_my_zsh.sh \
+            vim/auto_install_vim.sh

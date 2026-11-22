@@ -181,6 +181,10 @@ plugins=(
 
 执行 `source ~/.zshrc` 或开启新的 Shell 使配置生效。
 
+### 加载 ~/.profile
+
+`.zshrc` 末尾会在 `~/.profile` 存在时自动 `source` 它，用于继承登录 Shell 的环境变量（`PATH`、`EDITOR`、`LANG` 等）。该文件由用户自行维护，仓库内不提供模板，详见 [profile/README.md](../profile/README.md)。
+
 
 ## Zinit 插件管理器
 
@@ -193,6 +197,8 @@ git clone --depth=1 https://gitee.com/ruanfumin/zinit.git ~/.local/share/zinit/z
 # 国际源
 git clone --depth=1 https://github.com/zdharma-continuum/zinit.git ~/.local/share/zinit/zinit.git
 ```
+
+> **说明**：本仓库的日常插件（autosuggestions / syntax-highlighting / autocomplete 等）统一走 Oh-My-Zsh 的 `plugins=(...)` 加载，Zinit 安装后**不自动加载任何插件**，供需要懒加载等高级玩法时手动使用（如 `zinit light <plugin>`）。
 
 
 ## 镜像源说明

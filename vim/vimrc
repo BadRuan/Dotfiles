@@ -15,6 +15,8 @@
 set nocompatible          " 禁用 vi 兼容模式
 
 " vim-polyglot 相关设置（须在插件加载前定义）
+" autoindent 与 vim 内置 set autoindent（本文件第 53 行）功能重叠，
+" 禁用 polyglot 的实现以避免两套缩进逻辑互相干扰
 let g:polyglot_disabled = ['autoindent']
 let g:polyglot_is_disabled = 0
 

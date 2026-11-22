@@ -183,6 +183,9 @@ pacman_install() {
     return 1
 }
 
+# apt 索引只刷新一次（同一脚本内可能连续装 git、zsh 等多个包）
+APT_UPDATED=false
+
 # 使用包管理器安装软件包
 package_install() {
     local pkg_mgr="$1"
@@ -194,7 +197,10 @@ package_install() {
             pacman_install "$package_name"
             ;;
         apt-get)
-            run_priv "$pkg_mgr" update -y
+            if [ "$APT_UPDATED" != true ]; then
+                run_priv "$pkg_mgr" update -y
+                APT_UPDATED=true
+            fi
             run_priv "$pkg_mgr" install -y "$package_name"
             ;;
         dnf)

@@ -223,12 +223,12 @@ install_ycm() {
         # 主仓库走 GitCode 镜像；子模块 ycmd 无国内镜像，通过加速代理重写 github.com/ 前缀
         rm -rf "$target" 2>/dev/null || true
         if GIT_TERMINAL_PROMPT=0 git \
-                -c url."${GH_PROXY_1}/https://github.com/".insteadOf="https://github.com/" \
+                -c "url.${GH_PROXY_1}/https://github.com/.insteadOf=https://github.com/" \
                 -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=60 \
                 clone --depth=1 --recursive --shallow-submodules -q \
                 "https://gitcode.com/gh_mirrors/yo/YouCompleteMe.git" "$target" 2>/dev/null \
             || GIT_TERMINAL_PROMPT=0 git \
-                -c url."${GH_PROXY_1}/https://github.com/".insteadOf="https://github.com/" \
+                -c "url.${GH_PROXY_1}/https://github.com/.insteadOf=https://github.com/" \
                 -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=60 \
                 clone --depth=1 --recursive --shallow-submodules -q \
                 "$gh_url" "$target" 2>/dev/null; then
